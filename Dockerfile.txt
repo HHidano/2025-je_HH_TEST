@@ -1,0 +1,20 @@
+FROM php:8.2-apache
+
+# PostgreSQL拡張
+RUN apt-get update && \
+    apt-get install -y libpq-dev && \
+    docker-php-ext-install pdo pdo_pgsql && \
+    rm -rf /var/lib/apt/lists/*
+
+# Apacheのrewriteモジュール有効化
+RUN a2enmod rewrite
+
+# Adminerをダウンロード
+RUN mkdir -p /var/www/html && \
+    curl -L https://github.com/vrana/adminer/releases/download/v4.8.1/adminer-4.8.1.php -o /var/www/html/adminer.php
+
+# ソースコードをコピー
+COPY src/ /var/www/html/
+
+EXPOSE 80
+CMD ["apache2-foreground"]
